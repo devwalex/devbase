@@ -1,4 +1,5 @@
 const Bootcamp = require('../models/Bootcamp');
+const ErrorResponse = require('../utils/errorResponse');
 
 exports.getBootcamps = async (req, res, next) => {
     try {
@@ -10,10 +11,7 @@ exports.getBootcamps = async (req, res, next) => {
             data: bootcamps
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: error
-        });
+        next(error);
     }
 };
 
@@ -22,10 +20,7 @@ exports.getBootcamp = async (req, res, next) => {
         const bootcamp = await Bootcamp.findById(req.params.id);
 
         if (!bootcamp) {
-            return res.status(400).json({
-                success: false,
-                error: 'Bootcamp does not exist'
-            });
+            return next(new ErrorResponse(`Bootcamp is not found with id ${req.params.id}`, 404));
         }
 
         res.status(200).json({
@@ -33,10 +28,7 @@ exports.getBootcamp = async (req, res, next) => {
             data: bootcamp
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: error
-        });
+        next(error);
     }
 };
 
@@ -64,10 +56,7 @@ exports.updateBootcamp = async (req, res, next) => {
         });
 
         if (!bootcamp) {
-            return res.status(400).json({
-                success: false,
-                error: 'Bootcamp does not exist'
-            });
+            return next(new ErrorResponse(`Bootcamp is not found with id ${req.params.id}`, 404));
         }
 
         res.status(201).json({
@@ -76,10 +65,7 @@ exports.updateBootcamp = async (req, res, next) => {
             data: bootcamp
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: error
-        });
+        next(error);
     }
 }
 
@@ -88,10 +74,7 @@ exports.deleteBootcamp = async (req, res, next) => {
         const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
         if (!bootcamp) {
-            return res.status(400).json({
-                success: false,
-                error: 'Bootcamp does not exist'
-            });
+            return next(new ErrorResponse(`Bootcamp is not found with id ${req.params.id}`, 404));
         }
 
         res.status(201).json({
@@ -100,9 +83,6 @@ exports.deleteBootcamp = async (req, res, next) => {
             data: {}
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: error
-        });
+        next(error);
     }
 }
