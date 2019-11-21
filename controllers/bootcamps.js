@@ -6,6 +6,7 @@ exports.getBootcamps = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
+            counts: bootcamps.length,
             data: bootcamps
         });
     } catch (error) {
@@ -22,7 +23,8 @@ exports.getBootcamp = async (req, res, next) => {
 
         if (!bootcamp) {
             return res.status(400).json({
-                success: false
+                success: false,
+                error: 'Bootcamp does not exist'
             });
         }
 
@@ -54,16 +56,53 @@ exports.createBootcamp = async (req, res, next) => {
     }
 };
 
-exports.updateBootcamp = (req, res, next) => {
-    res.status(201).json({
-        success: true,
-        message: `Update bootcamp with id ${req.params.id}`
-    });
+exports.updateBootcamp = async (req, res, next) => {
+    try {
+        const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!bootcamp) {
+            return res.status(400).json({
+                success: false,
+                error: 'Bootcamp does not exist'
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Updated bootcamp successfully",
+            data: bootcamp
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error
+        });
+    }
 }
 
-exports.deleteBootcamp = (req, res, next) => {
-    res.status(200).json({
-        success: true,
-        message: `Delete bootcamp with id ${req.params.id}`
-    });
+exports.deleteBootcamp = async (req, res, next) => {
+    try {
+        const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+
+        if (!bootcamp) {
+            return res.status(400).json({
+                success: false,
+                error: 'Bootcamp does not exist'
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Deleted bootcamp successfully",
+            data: {}
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error
+        });
+    }
 }
